@@ -9,8 +9,6 @@ login_page = BeautifulSoup(login_page_req.text, "html.parser")
 token_field_name = "__RequestVerificationToken"
 token_value = login_page.find("input", attrs={"name": token_field_name})["value"]
 
-after_login_page = session.request(method="POST", url="https://www.geocaching.com/account/signin", data=post)
-
 myuser = input("Your geocaching.com username: ")
 mypsw = input("Your geocaching.com password: ")
 
@@ -19,6 +17,8 @@ post = {
     "Password": mypsw,
     token_field_name: token_value
 }
+
+after_login_page = session.request(method="POST", url="https://www.geocaching.com/account/signin", data=post)
 
 # Ask for website, scrape formula and apply to header coordinates
 while True:
