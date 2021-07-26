@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="996ce83a-f693-4647-96ef-5e6875fabbae" name="Default Changelist" comment="" />
+    <list default="true" id="996ce83a-f693-4647-96ef-5e6875fabbae" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/webscraper_powertrail/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/webscraper_powertrail/main.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -31,6 +33,7 @@
       <option name="presentableId" value="Default" />
       <updated>1627151028780</updated>
       <workItem from="1627151030961" duration="312000" />
+      <workItem from="1627293484993" duration="13000" />
     </task>
     <servers />
   </component>
