@@ -1,0 +1,9 @@
+name: geocaching
+channels:
+- conda-forge
+dependencies:
+- requests=2.27.1
+- sympy=1.10.1
+- pip=22.0.4
+- beautifulsoup4=4.11.1
+- ipython=8.3.0
