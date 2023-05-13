@@ -1,4 +1,4 @@
-name: geocaching
+name: geocaching_mystery_snippets
 channels:
 - conda-forge
 dependencies:
