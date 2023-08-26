@@ -1,4 +1,6 @@
+import pyperclip
 import requests
+
 from bs4 import BeautifulSoup
 
 session = requests.Session()
@@ -11,6 +13,9 @@ token_value = login_page.find("input", attrs={"name": token_field_name})["value"
 
 myuser = input("Your geocaching.com username: ")
 mypsw = input("Your geocaching.com password: ")
+allow_clipboard_input = input("Do you want to have the calculated coordinates copied into your clipboard automatically (y/n)?: ")
+
+allow_clipboard = (allow_clipboard_input.lower() in ["y", "j", "yes"])
 
 post = {
     "UsernameOrEmail": myuser,
@@ -73,9 +78,15 @@ while True:
     else:
         raise Exception(f"e_rule {e_rule} invalid")
 
+    
+    resulting_coords = f"{n_coords_pre} {n_new_coords:.3f} {e_coords_pre} {e_new_coords:.3f}"
+    
+    if allow_clipboard:
+        pyperclip.copy(resulting_coords)
+
     print(f"{p_str} (rule)")
     print(f"{' '.join(header_split)} (orig)")
-    print(f"{n_coords_pre} {n_new_coords:.3f} {e_coords_pre} {e_new_coords:.3f}")
+    print(resulting_coords)
 
     if not found:
         raise Exception("Calc rule not found")

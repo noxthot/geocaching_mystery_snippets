@@ -3,6 +3,12 @@ Snippets which help(ed) to solve some www.geocaching.com mystery caches.
 Mainly early prototype code to get things done (quick and dirty).
 
 ## Setup
+### System
+For clipboarding in `webscraper_powertrail`, you will need:
+```bash
+sudo apt-get install xclip
+```
+
 ### Conda
 Use conda to install all required modules (default environment: `geocaching_mystery_snippets`):
 ```
