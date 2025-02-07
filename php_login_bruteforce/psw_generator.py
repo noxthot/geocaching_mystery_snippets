@@ -1,5 +1,4 @@
 import os
-import itertools
 
 password_file = os.path.join("php_login_bruteforce", "psw.in")
 

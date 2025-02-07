@@ -1,7 +1,6 @@
 # Used for scraping K FredBullPowerTrail Lahmer Kaiser (starting with GC5HNFK)
 
 import requests
-import string
 
 from bs4 import BeautifulSoup
 
