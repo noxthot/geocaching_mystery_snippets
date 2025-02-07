@@ -1,3 +1,5 @@
+# Used for scraping Lovewalk (starting with GC4AK70)
+
 import pyperclip
 import seval
 
@@ -6,7 +8,9 @@ from bs4 import BeautifulSoup
 from utils.geocaching_api import get_session
 
 
-session, allow_clipboard = get_session()
+session_dict = get_session()
+session = session_dict["session"]
+allow_clipboard = session_dict["allow_clipboard"]
 
 # Ask for website, scrape formula and apply to header coordinates
 while True:

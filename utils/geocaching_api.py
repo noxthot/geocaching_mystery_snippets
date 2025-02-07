@@ -42,4 +42,4 @@ def get_session():
     else:
         raise Exception("Login failed")
 
-    return session, allow_clipboard
+    return {"session": session, "allow_clipboard": allow_clipboard}

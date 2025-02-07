@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from utils.geocaching_api import get_session
 
 
-session, _ = get_session()
+session = get_session()["session"]
 
 # Ask for website, scrape formula and apply to header coordinates
 while True:
