@@ -14,7 +14,7 @@ for nr in range(101, 1000):
             if sympy.isprime(nr // 10):     # XY
                 isPrime = True
                     
-                for c in str(nr)
+                for c in str(nr):
                     isPrime &= sympy.isprime(int(c)) # X, Y, Z
                     
                 if isPrime:
