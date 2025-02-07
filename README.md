@@ -9,19 +9,22 @@ For clipboarding in `webscraper_powertrail`, you will need:
 sudo apt-get install xclip
 ```
 
-### Conda
-Use conda to install all required modules (default environment: `geocaching_mystery_snippets`):
-```
-conda env create -f environment.yml
-```
-
-In case you already got the environment and only need to update to the latest `environment.yml` use:
-```
-conda activate geocaching_mystery_snippets
-conda env update --file environment.yml --prune
+### PDM
+Use `pdm` to install/sync all required modules:
+```bash
+pdm sync
 ```
 
-After manually adding a package, update the `environment.yml` using this command:
+To run code / `IPython` / `jupyter lab` in this environment:
+```bash
+pdm run python <SCRIPT.py>
+
+pdm run ipython
+
+pdm run jupyter lab
 ```
-conda env export --name geocaching_mystery_snippets > environment.yml
+
+To add a package:
+```bash
+pdm add <PACKAGE_NAME>
 ```
