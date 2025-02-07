@@ -5,3 +5,5 @@ php_login_bruteforce/psw.tried
 .pdm-python
 
 config.json
+
+*.pyc
