@@ -3,3 +3,5 @@ php_login_bruteforce/psw.tried
 
 .vscode
 .pdm-python
+
+config.json
