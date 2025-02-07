@@ -38,6 +38,11 @@ post = {
 
 after_login_page = session.request(method="POST", url="https://www.geocaching.com/account/signin", data=post)
 
+if "Sign out" in after_login_page.text:
+    print("Login successful")
+else:
+    raise Exception("Login failed")
+
 # Ask for website, scrape formula and apply to header coordinates
 while True:
     url = input("Cache-URL: ")
