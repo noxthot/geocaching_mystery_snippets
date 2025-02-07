@@ -1,8 +1,16 @@
 import json
 import os
+import re
 import requests
 
 from bs4 import BeautifulSoup
+
+
+def _to_decimal(coord_str):
+    _, coord_deg, coord_min = coord_str.replace("°", "").replace("'", "").split(" ")
+
+    return round(int(coord_deg) + float(coord_min) / 60, 5)
+
 
 def get_session():
     session = requests.Session()
@@ -43,3 +51,46 @@ def get_session():
         raise Exception("Login failed")
 
     return {"session": session, "allow_clipboard": allow_clipboard}
+
+
+def set_user_coordinate(session, gc_code, lat_str, lon_str):
+    lat_dec = _to_decimal(lat_str)
+    lon_dec = _to_decimal(lon_str)
+
+    uri_usertoken = f"https://www.geocaching.com/seek/cache_details.aspx?wp={gc_code.upper()}"
+
+    page_usertoken = session.get(uri_usertoken, headers={"Referer" : uri_usertoken})
+
+    res = re.search('userToken = \'(.*)\';', page_usertoken.text)
+
+    if not(res):
+        raise("Could not find userToken")
+
+    userToken = res.group(1)
+
+    post_data = {
+        "dto": {
+            "data": {
+                "lat": lat_dec,
+                "lng": lon_dec,
+            },
+            "ut": userToken,
+        },
+    }
+
+    uri_suc = "https://www.geocaching.com/seek/cache_details.aspx/SetUserCoordinate"
+    user_agent = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0"
+
+    after_request = session.post(
+                                    uri_suc,
+                                    allow_redirects=False,
+                                    headers={"User-Agent" : user_agent, "Referer" : uri_suc},
+                                    json=post_data
+    )
+
+    if after_request.status_code == 200:
+        print(f"Coordinates updated successfully for {gc_code}")
+    else:
+        raise Exception(f"Failed to update coordinates for {gc_code}")
+
+    
