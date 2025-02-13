@@ -6,6 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
+from selenium import webdriver
 
 
 _BASE_URL = "https://www.geocaching.com"
@@ -106,4 +107,55 @@ def set_user_coordinate(session, gc_code, lat_str, lon_str):
     else:
         raise Exception(f"Failed to update coordinates for {gc_code}")
 
-    
+
+def get_geocaches_from_list(session, list_code):
+    def _transfer_cookies_to_selenium(session, driver):
+        driver.delete_all_cookies()
+
+        for cookie in session.cookies:
+            driver.add_cookie({
+                'name': cookie.name,
+                'value': cookie.value,
+                'domain': cookie.domain,
+                'path': cookie.path,
+                'secure': cookie.secure,
+            })
+
+    uri = f"{URLS["list"]}/{list_code}"
+
+    service = webdriver.chrome.service.Service()
+
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")
+
+    driver = webdriver.Chrome(service=service, options=options)
+    driver.get(_BASE_URL)
+
+    _transfer_cookies_to_selenium(session, driver)
+
+    driver.get(uri)
+
+    # Wait for the page to load and find the necessary elements
+    driver.implicitly_wait(3)
+
+    # Extract the page source
+    page_source = driver.page_source
+
+    # Close the browser
+    driver.quit()
+
+    # Parse the page source with BeautifulSoup
+    soup = BeautifulSoup(page_source, "html.parser")
+
+    gc_codes = []
+
+    for div in soup.find_all("div", class_="geocache-meta"):
+        spans = div.find_all("span")
+        
+        if len(spans) != 2:
+            raise Exception("Sanity check failed: spans should equal 2")
+        
+        gc_code = spans[1].text.strip()
+        gc_codes.append(gc_code)
+
+    return gc_codes
