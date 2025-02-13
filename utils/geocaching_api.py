@@ -4,6 +4,20 @@ import re
 import requests
 
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+
+
+
+_BASE_URL = "https://www.geocaching.com"
+
+URLS = {
+    "cache_details": urljoin(_BASE_URL, "seek/cache_details.aspx"),
+    "geocache": urljoin(_BASE_URL, "geocache"),
+    "login": urljoin(_BASE_URL, "account/signin"),
+    "list": urljoin(_BASE_URL, "plan/lists"),
+}
+
+_USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0"
 
 
 def _to_decimal(coord_str):
@@ -16,7 +30,7 @@ def get_session():
     session = requests.Session()
 
     # Login geocaching.com
-    login_page_req = session.request(method="GET", url="https://www.geocaching.com/account/signin")
+    login_page_req = session.request(method="GET", url=URLS["login"])
     login_page = BeautifulSoup(login_page_req.text, "html.parser")
     token_field_name = "__RequestVerificationToken"
     token_value = login_page.find("input", attrs={"name": token_field_name})["value"]
@@ -43,7 +57,7 @@ def get_session():
         token_field_name: token_value
     }
 
-    after_login_page = session.request(method="POST", url="https://www.geocaching.com/account/signin", data=post)
+    after_login_page = session.request(method="POST", url=URLS["login"], data=post)
 
     if "Sign out" in after_login_page.text:
         print("Login successful")
@@ -57,7 +71,7 @@ def set_user_coordinate(session, gc_code, lat_str, lon_str):
     lat_dec = _to_decimal(lat_str)
     lon_dec = _to_decimal(lon_str)
 
-    uri_usertoken = f"https://www.geocaching.com/seek/cache_details.aspx?wp={gc_code.upper()}"
+    uri_usertoken = f"{URLS["cache_details"]}?wp={gc_code.upper()}"
 
     page_usertoken = session.get(uri_usertoken, headers={"Referer" : uri_usertoken})
 
@@ -78,13 +92,12 @@ def set_user_coordinate(session, gc_code, lat_str, lon_str):
         },
     }
 
-    uri_suc = "https://www.geocaching.com/seek/cache_details.aspx/SetUserCoordinate"
-    user_agent = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0"
+    uri_suc = f"{URLS["cache_details"]}/SetUserCoordinate"
 
     after_request = session.post(
                                     uri_suc,
                                     allow_redirects=False,
-                                    headers={"User-Agent" : user_agent, "Referer" : uri_suc},
+                                    headers={"User-Agent" : _USER_AGENT, "Referer" : uri_suc},
                                     json=post_data
     )
 
