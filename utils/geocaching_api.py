@@ -78,7 +78,7 @@ def set_user_coordinate(session, gc_code, lat_str, lon_str):
     res = re.search('userToken = \'(.*)\';', page_usertoken.text)
 
     if not(res):
-        raise("Could not find userToken")
+        raise Exception("Could not find userToken")
 
     userToken = res.group(1)
 
