@@ -5,6 +5,10 @@ Created on Sat May  2 12:02:17 2020
 @author: grego
 """
 
+import inquirer
+import os
+
+
 def convertSpecialChars(word):
     replace_strings = {'0' : 'null',
                        '11': 'elf',
@@ -39,10 +43,35 @@ def convertSpecialChars(word):
     return word
 
 
-with open('input_tomatch2.txt', 'r', encoding="utf-8") as f:
+def choose_directory():
+    current_path = os.path.dirname(os.path.abspath(__file__))
+    dirs = [d for d in os.listdir(current_path) if os.path.isdir(os.path.join(current_path, d))]
+    
+    if not dirs:
+        print("No directories found in the current path.")
+        return None
+
+    questions = [
+        inquirer.List(
+            'directory',
+            message="Choose the input directory:",
+            choices=dirs
+        )
+    ]
+
+    answers = inquirer.prompt(questions)
+    
+    return os.path.join(current_path, answers['directory'])
+
+
+selected_directory = choose_directory()
+print(f"Selected directory: {selected_directory}")
+
+
+with open(os.path.join(selected_directory, 'input_tomatch.txt'), 'r', encoding="utf-8") as f:
     lines_tomatch = f.readlines()
     
-with open('input_dict.txt', 'r', encoding="utf-8") as f:
+with open(os.path.join(selected_directory, 'input_dict.txt'), 'r', encoding="utf-8") as f:
     lines_dict = f.readlines() 
     
 lines_tomatch = [s.replace('\n', '').replace('\t', '') for s in lines_tomatch]
