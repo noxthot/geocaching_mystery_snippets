@@ -1,0 +1,106 @@
+Name
+Alfenz
+Almbach
+Alpbach
+Aschauer Ache
+Axamer Bach
+Brandenberger Ache
+Brixentaler Ache
+Debantbach
+Dorferbach
+Drau
+Dürrach
+Faggenbach
+Fieberbrunner Ache
+Fimbabach
+Finsingbach
+Fischbach
+Floitenbach
+Gail
+Gerlosbach
+Gießenbach
+Gleirschbach
+Gleirschbach
+Gschnitzbach
+Gurglbach
+Gurgler Ache
+Horlachbach
+Hornbach
+Inn
+Isel
+Jambach
+Kaiserbach
+Kaiserbach
+Kalserbach
+Kapruner Ache
+Karwendelbach
+Kelchsauer Ache
+Kieferbach
+Kohlenbach
+Kristeinbach
+Kurzer-Grund-Ache
+Langer-Grund-Ache
+Lech
+Leutascher Ache
+Loferbach
+Loisach
+Märzenbach
+Maurerbach
+Melach
+Namlosbach
+Navisbach
+Nederbach
+Neidernach
+Oberbergbach
+Obernberger Seebach
+Otterbach
+Ötztaler Ache
+Pinnisbach
+Pitze
+Pletzach
+Prien
+Radurschlbach
+Rißbach
+Rosanna
+Rotlech
+Ruetz
+Saalach
+Sanna
+Schergenbach
+Schönach
+Schwarzach
+Schwarzlofer
+Schwarzwasserbach
+Sidanbach
+Sill
+Steinacher Achen
+Steinberger Ache
+Stillebach
+Stilluppbach
+Streimbach
+Tauernbach
+Tiroler Achen
+Trettach
+Trisanna
+Tuxbach
+Uina
+Valser Bach
+Venter Ache
+Viggarbach
+Villgratenbach
+Vils
+Voldertalbach
+Vomper Bach
+Walchen
+Wattenbach
+Weerbach
+Weißache
+Wertach
+Wildschönauer Ache
+Windache
+Windauer Ache
+Winkeltalbach
+Zamser Bach
+Zemmbach
+Ziller
+Zirmbach
