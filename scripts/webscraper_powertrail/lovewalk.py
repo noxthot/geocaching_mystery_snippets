@@ -5,127 +5,135 @@ import seval
 
 from bs4 import BeautifulSoup
 
-from geocaching_mystery_snippets.utils.geocaching_api import get_session
+from geocaching_mystery_snippets.utils.geocaching_api import get_geocaches_from_list, get_session, set_user_coordinate
 
 
 session_dict = get_session()
 session = session_dict["session"]
 allow_clipboard = session_dict["allow_clipboard"]
 
-# Ask for website, scrape formula and apply to header coordinates
-while True:
-    url = input("Cache-URL: ")
+url = input("List-URL: ")
 
-    if url == "":
-        break
+list_code = url.split("/")[-1]
 
-    page = session.get(url)
-    soup = BeautifulSoup(page.content, "html.parser")
+print("List Code:", list_code)
 
-    usercontent = soup.find(id="ctl00_ContentBody_LongDescription")
+gc_codes = get_geocaches_from_list(session, list_code)
 
-    found = False
+proceed = input(f"Found {len(gc_codes)} geocaches. Want to proceed (y/n)? ")
 
-    e_op = None
-    e_rule = None
-    n_op = None
-    n_rule = None
-    symbols = []
+if proceed == "y":
+    for idx, gc_code in enumerate(gc_codes):
+        url = input("Cache-URL: ")
 
-    start_symbol_search = False
+        if url == "":
+            break
 
-    # find calc rule for new coords
-    for p in usercontent.findAll("p"):
-        if p.text == ("Dafür müsst ihr kurze schnelle Rechnungen lösen!"):
-            start_symbol_search = True
-            continue
+        page = session.get(url)
+        soup = BeautifulSoup(page.content, "html.parser")
 
-        if p.text == ("Final Koordinaten"):
-            start_symbol_search = False
+        usercontent = soup.find(id="ctl00_ContentBody_LongDescription")
 
-        if start_symbol_search:
-            p_str = p.text
+        found = False
 
-            if "=" in p_str:
-                symbols.append(p_str)
-        elif p.text.startswith("Header N"):  # Header N 47° +ABA
-            p_str = p.text
-            print(p_str)
+        e_op = None
+        e_rule = None
+        n_op = None
+        n_rule = None
+        symbols = []
 
-            if "+" in p_str:
-                n_op = "+"
-            elif "-" in p_str:
-                n_op = "-"
+        start_symbol_search = False
 
-            n_rule = p_str.split(n_op)[1].strip()
+        # find calc rule for new coords
+        for p in usercontent.findAll("p"):
+            if p.text == ("Dafür müsst ihr kurze schnelle Rechnungen lösen!"):
+                start_symbol_search = True
+                continue
 
-            # sanity check
-            if n_op is None:
-                raise Exception("Sanity check failed")
-        elif p.text.startswith("Header E"):  # Header E 011° +CDE
-            p_str = p.text
-            print(p_str)
+            if p.text == ("Final Koordinaten"):
+                start_symbol_search = False
 
-            if "+" in p_str:
-                e_op = "+"
-            elif "-" in p_str:
-                e_op = "-"
+            if start_symbol_search:
+                p_str = p.text
 
-            e_rule = p_str.split(e_op)[1].strip()
+                if "=" in p_str:
+                    symbols.append(p_str)
+            elif p.text.startswith("Header N"):  # Header N 47° +ABA
+                p_str = p.text
+                print(p_str)
 
-            break  # Last line to be found
+                if "+" in p_str:
+                    n_op = "+"
+                elif "-" in p_str:
+                    n_op = "-"
 
-    # sanity checks
-    if e_op is None:
-        raise Exception("Sanity check failed: e_op")
+                n_rule = p_str.split(n_op)[1].strip()
 
-    if n_op is None:
-        raise Exception("Sanity check failed: n_op")
+                # sanity check
+                if n_op is None:
+                    raise Exception("Sanity check failed")
+            elif p.text.startswith("Header E"):  # Header E 011° +CDE
+                p_str = p.text
+                print(p_str)
 
-    if len(symbols) == 0:
-        raise Exception("Sanity check failed: symbols empty")
+                if "+" in p_str:
+                    e_op = "+"
+                elif "-" in p_str:
+                    e_op = "-"
 
-    print(f"{'\n'.join(symbols)} (symbols)")
+                e_rule = p_str.split(e_op)[1].strip()
 
-    key_mapping = {}
+                break  # Last line to be found
 
-    for symbol in symbols:
-        varname, formula = symbol.split(" = ")
-        key_mapping[varname] = str(int(seval.safe_eval(formula)))
+        # sanity checks
+        if e_op is None:
+            raise Exception("Sanity check failed: e_op")
 
-    e_numb = int("".join([key_mapping[k] for k in e_rule])) / 1000
-    n_numb = int("".join([key_mapping[k] for k in n_rule])) / 1000
+        if n_op is None:
+            raise Exception("Sanity check failed: n_op")
 
-    headersoup = soup.find(id="uxLatLon")  # e.g. 'N 47° 04.900 E 011° 25.960'
-    header_split = headersoup.text.split()
+        if len(symbols) == 0:
+            raise Exception("Sanity check failed: symbols empty")
 
-    n_coords_pre = f"{header_split[0]} {header_split[1]}"
-    n_coords_header = float(header_split[2])
+        print(f"{'\n'.join(symbols)} (symbols)")
 
-    e_coords_pre = f"{header_split[3]} {header_split[4]}"
-    e_coords_header = float(header_split[5])
+        key_mapping = {}
 
-    if n_op == "+":
-        n_new_coords = n_coords_header + n_numb
-    elif n_op == "-":
-        n_new_coords = n_coords_header - n_numb
-    else:
-        raise Exception(f"n_rule {n_rule} invalid")
+        for symbol in symbols:
+            varname, formula = symbol.split(" = ")
+            key_mapping[varname] = str(int(seval.safe_eval(formula)))
 
-    if e_op == "+":
-        e_new_coords = e_coords_header + e_numb
-    elif e_op == "-":
-        e_new_coords = e_coords_header - e_numb
-    else:
-        raise Exception(f"e_rule {e_rule} invalid")
+        e_numb = int("".join([key_mapping[k] for k in e_rule])) / 1000
+        n_numb = int("".join([key_mapping[k] for k in n_rule])) / 1000
 
-    resulting_coords = (
-        f"{n_coords_pre} {n_new_coords:.3f} {e_coords_pre} {e_new_coords:.3f}"
-    )
+        headersoup = soup.find(id="uxLatLon")  # e.g. 'N 47° 04.900 E 011° 25.960'
+        header_split = headersoup.text.split()
 
-    if allow_clipboard:
-        pyperclip.copy(resulting_coords)
+        n_coords_pre = f"{header_split[0]} {header_split[1]}"
+        n_coords_header = float(header_split[2])
 
-    print(symbols)
-    print(f"{' '.join(header_split)} (orig)")
-    print(resulting_coords)
+        e_coords_pre = f"{header_split[3]} {header_split[4]}"
+        e_coords_header = float(header_split[5])
+
+        if n_op == "+":
+            n_new_coords = n_coords_header + n_numb
+        elif n_op == "-":
+            n_new_coords = n_coords_header - n_numb
+        else:
+            raise Exception(f"n_rule {n_rule} invalid")
+
+        if e_op == "+":
+            e_new_coords = e_coords_header + e_numb
+        elif e_op == "-":
+            e_new_coords = e_coords_header - e_numb
+        else:
+            raise Exception(f"e_rule {e_rule} invalid")
+
+        set_user_coordinate(session, gc_code, f"{n_coords_pre} {n_new_coords:.3f}", f"{e_coords_pre} {e_new_coords:.3f}")
+
+        print(symbols)
+        print(f"Changed from original {' '.join(header_split)} (orig)")
+        print(f"to {n_coords_pre} {n_new_coords:.3f} {e_coords_pre} {e_new_coords:.3f}")
+        print()
+
+print("Done.")
