@@ -18,7 +18,9 @@ URLS = {
     "list": urljoin(_BASE_URL, "plan/lists"),
 }
 
-_USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0"
+_USER_AGENT = (
+    "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0"
+)
 
 
 def _to_decimal(coord_str):
@@ -49,14 +51,12 @@ def get_session():
         print("No config provided. Ask user for credentials.")
         myuser = input("Your geocaching.com username: ")
         mypsw = input("Your geocaching.com password: ")
-        allow_clipboard_input = input("Do you want to have the calculated coordinates copied into your clipboard automatically (y/n)?: ")
-        allow_clipboard = (allow_clipboard_input.lower() in ["y", "j", "yes"])
+        allow_clipboard_input = input(
+            "Do you want to have the calculated coordinates copied into your clipboard automatically (y/n)?: "
+        )
+        allow_clipboard = allow_clipboard_input.lower() in ["y", "j", "yes"]
 
-    post = {
-        "UsernameOrEmail": myuser,
-        "Password": mypsw,
-        token_field_name: token_value
-    }
+    post = {"UsernameOrEmail": myuser, "Password": mypsw, token_field_name: token_value}
 
     after_login_page = session.request(method="POST", url=URLS["login"], data=post)
 
@@ -72,13 +72,13 @@ def set_user_coordinate(session, gc_code, lat_str, lon_str):
     lat_dec = _to_decimal(lat_str)
     lon_dec = _to_decimal(lon_str)
 
-    uri_usertoken = f"{URLS["cache_details"]}?wp={gc_code.upper()}"
+    uri_usertoken = f"{URLS['cache_details']}?wp={gc_code.upper()}"
 
-    page_usertoken = session.get(uri_usertoken, headers={"Referer" : uri_usertoken})
+    page_usertoken = session.get(uri_usertoken, headers={"Referer": uri_usertoken})
 
-    res = re.search('userToken = \'(.*)\';', page_usertoken.text)
+    res = re.search("userToken = '(.*)';", page_usertoken.text)
 
-    if not(res):
+    if not (res):
         raise Exception("Could not find userToken")
 
     userToken = res.group(1)
@@ -93,13 +93,13 @@ def set_user_coordinate(session, gc_code, lat_str, lon_str):
         },
     }
 
-    uri_suc = f"{URLS["cache_details"]}/SetUserCoordinate"
+    uri_suc = f"{URLS['cache_details']}/SetUserCoordinate"
 
     after_request = session.post(
-                                    uri_suc,
-                                    allow_redirects=False,
-                                    headers={"User-Agent" : _USER_AGENT, "Referer" : uri_suc},
-                                    json=post_data
+        uri_suc,
+        allow_redirects=False,
+        headers={"User-Agent": _USER_AGENT, "Referer": uri_suc},
+        json=post_data,
     )
 
     if after_request.status_code == 200:
@@ -113,15 +113,17 @@ def get_geocaches_from_list(session, list_code):
         driver.delete_all_cookies()
 
         for cookie in session.cookies:
-            driver.add_cookie({
-                'name': cookie.name,
-                'value': cookie.value,
-                'domain': cookie.domain,
-                'path': cookie.path,
-                'secure': cookie.secure,
-            })
+            driver.add_cookie(
+                {
+                    "name": cookie.name,
+                    "value": cookie.value,
+                    "domain": cookie.domain,
+                    "path": cookie.path,
+                    "secure": cookie.secure,
+                }
+            )
 
-    uri = f"{URLS["list"]}/{list_code}"
+    uri = f"{URLS['list']}/{list_code}"
 
     service = webdriver.chrome.service.Service()
 
@@ -151,10 +153,10 @@ def get_geocaches_from_list(session, list_code):
 
     for div in soup.find_all("div", class_="geocache-meta"):
         spans = div.find_all("span")
-        
+
         if len(spans) != 2:
             raise Exception("Sanity check failed: spans should equal 2")
-        
+
         gc_code = spans[1].text.strip()
         gc_codes.append(gc_code)
 

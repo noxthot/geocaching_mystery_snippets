@@ -2,7 +2,7 @@ import pyperclip
 
 from bs4 import BeautifulSoup
 
-from utils.geocaching_api import get_session
+from geocaching_mystery_snippets.utils.geocaching_api import get_session
 
 
 session_dict = get_session()
@@ -22,7 +22,7 @@ while True:
     usercontent = soup.find(id="ctl00_ContentBody_LongDescription")
 
     found_e = False
-    found_n= False
+    found_n = False
 
     # find calc rule for new coords
     for p in usercontent.findAll("h3"):
@@ -31,7 +31,7 @@ while True:
         if p_str.startswith("N: Header"):  # line example: 'N: Header + 357'
             if found_n:
                 raise Exception("Formula for N found twice")
-            
+
             n_rule = p_str.split()[2]
             n_numb = int(p_str.split()[3]) / 1000
             n_pstr = p_str
@@ -40,7 +40,7 @@ while True:
         if p_str.startswith("E: Header"):  # line example: 'E: Header - 154'
             if found_e:
                 raise Exception("Formula for N found twice")
-            
+
             e_rule = p_str.split()[2]
             e_numb = int(p_str.split()[3]) / 1000
             e_pstr = p_str
@@ -71,9 +71,11 @@ while True:
         e_new_coords = e_coords_header - e_numb
     else:
         raise Exception(f"e_rule {e_rule} invalid")
-    
-    resulting_coords = f"{n_coords_pre} {n_new_coords:.3f} {e_coords_pre} {e_new_coords:.3f}"
-    
+
+    resulting_coords = (
+        f"{n_coords_pre} {n_new_coords:.3f} {e_coords_pre} {e_new_coords:.3f}"
+    )
+
     if allow_clipboard:
         pyperclip.copy(resulting_coords)
 
@@ -84,4 +86,3 @@ while True:
 
     if not (found_e and found_n):
         raise Exception("Calc rule not found")
-

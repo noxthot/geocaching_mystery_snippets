@@ -1,7 +1,7 @@
 # Used for scraping K FredBullPowerTrail Lahmer Kaiser (starting with GC5HNFK)
 from bs4 import BeautifulSoup
 
-from utils.geocaching_api import get_session
+from geocaching_mystery_snippets.utils.geocaching_api import get_session
 
 
 session = get_session()["session"]
@@ -22,7 +22,9 @@ while True:
 
     # find calc rule for new coords
     for p in usercontent.findAll("p"):
-        if p.text.startswith("Der Weg zum Cache"):  # line example: 'N: Header + 357\r\nE: Header + 1498'
+        if p.text.startswith(
+            "Der Weg zum Cache"
+        ):  # line example: 'N: Header + 357\r\nE: Header + 1498'
             p_str = p.text
             p_rowsplit = p.text.split("\n")
             n_rule = p_rowsplit[4].split()[0]
@@ -32,8 +34,13 @@ while True:
             found = True
 
             # sanity check
-            if p_rowsplit[2].rstrip() != "N-Header (Startcoords Nord)" or p_rowsplit[7].rstrip() != "E-Header (Startcoords Ost/East)":
-                raise Exception(f"Sanity check failed - {p_rowsplit[2].rstrip()} - {p_rowsplit[7].rstrip()}")
+            if (
+                p_rowsplit[2].rstrip() != "N-Header (Startcoords Nord)"
+                or p_rowsplit[7].rstrip() != "E-Header (Startcoords Ost/East)"
+            ):
+                raise Exception(
+                    f"Sanity check failed - {p_rowsplit[2].rstrip()} - {p_rowsplit[7].rstrip()}"
+                )
 
             break
 
@@ -69,4 +76,3 @@ while True:
 
     if not found:
         raise Exception("Calc rule not found")
-

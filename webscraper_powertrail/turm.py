@@ -2,7 +2,7 @@ import pyperclip
 
 from bs4 import BeautifulSoup
 
-from utils.geocaching_api import get_session
+from geocaching_mystery_snippets.utils.geocaching_api import get_session
 
 
 session_dict = get_session()
@@ -24,10 +24,12 @@ while True:
     found = False
 
     # find calc rule for new coords
-    for p in usercontent.findAll("h2"): # line example: 'N: Header + 357\r\nE: Header + 1498'
+    for p in usercontent.findAll(
+        "h2"
+    ):  # line example: 'N: Header + 357\r\nE: Header + 1498'
         p_str = p.text
 
-        if "N: Header" in p_str: 
+        if "N: Header" in p_str:
             n_rule = p_str.split()[2]
             n_numb = int(p_str.split()[3]) / 1000
         elif "E: Header" in p_str:
@@ -63,13 +65,13 @@ while True:
     else:
         raise Exception(f"e_rule {e_rule} invalid")
 
-    
-    resulting_coords = f"{n_coords_pre} {n_new_coords:.3f} {e_coords_pre} {e_new_coords:.3f}"
-    
+    resulting_coords = (
+        f"{n_coords_pre} {n_new_coords:.3f} {e_coords_pre} {e_new_coords:.3f}"
+    )
+
     if allow_clipboard:
         pyperclip.copy(resulting_coords)
 
     print(f"{p_str} (rule)")
     print(f"{' '.join(header_split)} (orig)")
     print(resulting_coords)
-

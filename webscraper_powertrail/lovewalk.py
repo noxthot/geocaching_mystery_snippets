@@ -5,7 +5,7 @@ import seval
 
 from bs4 import BeautifulSoup
 
-from utils.geocaching_api import get_session
+from geocaching_mystery_snippets.utils.geocaching_api import get_session
 
 
 session_dict = get_session()
@@ -72,20 +72,19 @@ while True:
                 e_op = "-"
 
             e_rule = p_str.split(e_op)[1].strip()
-            
-            break  # Last line to be found
 
+            break  # Last line to be found
 
     # sanity checks
     if e_op is None:
         raise Exception("Sanity check failed: e_op")
-    
+
     if n_op is None:
         raise Exception("Sanity check failed: n_op")
-    
+
     if len(symbols) == 0:
         raise Exception("Sanity check failed: symbols empty")
-    
+
     print(f"{'\n'.join(symbols)} (symbols)")
 
     key_mapping = {}
@@ -120,13 +119,13 @@ while True:
     else:
         raise Exception(f"e_rule {e_rule} invalid")
 
-    resulting_coords = f"{n_coords_pre} {n_new_coords:.3f} {e_coords_pre} {e_new_coords:.3f}"
-    
+    resulting_coords = (
+        f"{n_coords_pre} {n_new_coords:.3f} {e_coords_pre} {e_new_coords:.3f}"
+    )
+
     if allow_clipboard:
         pyperclip.copy(resulting_coords)
 
     print(symbols)
     print(f"{' '.join(header_split)} (orig)")
     print(resulting_coords)
-    
-

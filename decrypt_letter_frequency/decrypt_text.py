@@ -40,7 +40,11 @@ if INPUT_LANGUAGE not in {"DE", "EN", "ES", "FR", "IT", "PT", "SE"}:
 # %%
 # Load language letter frequencies
 df_lang_letter_frequencies = pd.read_csv(os.path.join("letter_frequencies.csv"))
-lang_letters_desc_sorted_by_frequency = df_lang_letter_frequencies[[colname_letter, INPUT_LANGUAGE]].sort_values(INPUT_LANGUAGE, ascending=False)[colname_letter].values
+lang_letters_desc_sorted_by_frequency = (
+    df_lang_letter_frequencies[[colname_letter, INPUT_LANGUAGE]]
+    .sort_values(INPUT_LANGUAGE, ascending=False)[colname_letter]
+    .values
+)
 
 
 # %%
@@ -48,19 +52,27 @@ lang_letters_desc_sorted_by_frequency = df_lang_letter_frequencies[[colname_lett
 input_text_upper = INPUT_TEXT.upper()
 count_frequency = Counter(input_text_upper)
 
-text_letters_desc_sorted_by_frequency = [tup[0] for tup in count_frequency.most_common() if tup[0] in string.ascii_uppercase]
+text_letters_desc_sorted_by_frequency = [
+    tup[0] for tup in count_frequency.most_common() if tup[0] in string.ascii_uppercase
+]
 
 
 # %%
 # Decrypt text based on frequencies
-letter_mapping = dict({source : dest for source, dest in zip(text_letters_desc_sorted_by_frequency, lang_letters_desc_sorted_by_frequency)})
+letter_mapping = dict(
+    {
+        source: dest
+        for source, dest in zip(
+            text_letters_desc_sorted_by_frequency, lang_letters_desc_sorted_by_frequency
+        )
+    }
+)
 decrypted_text = []
 
-for l in input_text_upper:
-    if l in letter_mapping:
-        decrypted_text.append(letter_mapping[l])
-    else:
-        decrypted_text.append(l)
+for letter in input_text_upper:
+    decrypted_text.append(
+        letter_mapping[letter] if (letter in letter_mapping) else letter
+    )
 
 
 # %%

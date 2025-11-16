@@ -1,7 +1,12 @@
 # Used for scraping FBPT M486 BikePT Die Antwort der Doppeladlerin (starting with GC73NEP)
 from bs4 import BeautifulSoup
 
-from utils.geocaching_api import get_geocaches_from_list, get_session, set_user_coordinate, URLS
+from geocaching_mystery_snippets.utils.geocaching_api import (
+    get_geocaches_from_list,
+    get_session,
+    set_user_coordinate,
+    URLS,
+)
 
 
 session_dict = get_session()
@@ -20,7 +25,7 @@ proceed = input(f"Found {len(gc_codes)} geocaches. Want to proceed (y/n)? ")
 
 if proceed == "y":
     for idx, gc_code in enumerate(gc_codes):
-        page = session.get(f"{URLS["geocache"]}/{gc_code}")
+        page = session.get(f"{URLS['geocache']}/{gc_code}")
         soup = BeautifulSoup(page.content, "html.parser")
 
         usercontent = soup.find(id="ctl00_ContentBody_LongDescription")
@@ -33,7 +38,9 @@ if proceed == "y":
                 lines = p.text.split()
                 break
 
-        if len(lines) != 9:  # e.g. looks like this: ['Start-Koordinaten', 'N47°', '33.940', '+', '617', 'E012°', '05.600', '-', '96']
+        if (
+            len(lines) != 9
+        ):  # e.g. looks like this: ['Start-Koordinaten', 'N47°', '33.940', '+', '617', 'E012°', '05.600', '-', '96']
             raise Exception("Sanity check failed: lines")
 
         n_base, n_op, n_numb_str = lines[2], lines[3], lines[4]
@@ -56,7 +63,7 @@ if proceed == "y":
 
         if e_coords_header != float(e_base):
             raise Exception("Sanity check failed: e_coords_header")
-        
+
         if n_op == "+":
             n_new_coords = n_coords_header + n_numb
         elif n_op == "-":

